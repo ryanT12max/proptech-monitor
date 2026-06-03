@@ -1,6 +1,23 @@
-<script>
-        
-        const ordsUrl = 'https://g9f6559706c9bbf-aviationdb.adb.us-chicago-1.oraclecloudapps.com/ords/admin/proptech_threats/';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PropTech Threat Monitor</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #f4f4f9; padding: 20px; }
+        .threat-card { background: white; padding: 15px; margin-bottom: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .high-threat { border-left: 5px solid red; }
+        .low-threat { border-left: 5px solid green; }
+    </style>
+</head>
+<body>
+    <h2>Live Real Estate Threat Monitor</h2>
+    <div id="dashboard">Loading threat intelligence...</div>
+
+    <script>
+        // REPLACE THE URL BELOW WITH YOUR ACTUAL ORDS ENDPOINT
+        const ordsUrl = 'https://g9f6559706c9bbf-aviationdb.abd.us-chicago-1.oraclecloudapps.com/ords/admin/proptech_threats/';
 
         fetch(ordsUrl)
             .then(response => response.json())
@@ -10,13 +27,12 @@
                 
                 // Check if the database is empty
                 if (!data.items || data.items.length === 0) {
-                    dashboard.innerHTML = '<p>No threats detected yet. Awaiting OCI Pipeline execution.</p>';
+                    dashboard.innerHTML = '<p>No threats detected yet. Run your OCI Pipeline to fetch data.</p>';
                     return;
                 }
 
-                // Map through the new database columns
+                // Map through the database columns
                 data.items.forEach(item => {
-                    // Using the new numeric THREAT_SCORE (assuming a 1-10 scale, where > 5 is high risk)
                     const threatClass = item.threat_score > 5 ? 'high-threat' : 'low-threat';
                     const card = `
                         <div class="threat-card ${threatClass}">
@@ -31,6 +47,8 @@
             })
             .catch(error => {
                 console.error("Fetch error:", error);
-                document.getElementById('dashboard').innerHTML = '<p style="color:red;">Error loading intelligence feed. Press F12 to check the console for details.</p>';
+                document.getElementById('dashboard').innerHTML = '<p style="color:red;">Error loading intelligence feed. Have you enabled CORS in Oracle?</p>';
             });
     </script>
+</body>
+</html>
